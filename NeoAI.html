@@ -1,0 +1,3223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#101012">
+<title>NeoAI</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+    background:#101012;
+    color:#f5f5f5;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+    width:100%;
+    height:100dvh;
+    display:flex;
+    overflow:hidden;
+    position:relative;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    width:290px;
+    min-width:290px;
+    height:100%;
+    background:#171719;
+    border-right:1px solid #29292c;
+    display:flex;
+    flex-direction:column;
+    z-index:50;
+    transition:transform .25s ease;
+}
+
+.sidebar-top{
+    padding:22px 18px 15px;
+}
+
+.logo-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ff8a61,#b75cff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    font-weight:800;
+    color:white;
+    flex-shrink:0;
+}
+
+.logo-title{
+    font-size:23px;
+    font-weight:800;
+}
+
+.new-chat{
+    width:100%;
+    height:52px;
+    border-radius:14px;
+    border:1px solid #343438;
+    background:#1c1c1f;
+    color:#f4f4f4;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.new-chat:hover{
+    background:#252529;
+}
+
+.search-box{
+    margin-top:14px;
+    width:100%;
+    height:48px;
+    padding:0 15px;
+    border:1px solid #303034;
+    background:#1c1c1f;
+    border-radius:13px;
+    color:#fff;
+    outline:none;
+    font-size:14px;
+}
+
+.search-box:focus{
+    border-color:#777;
+}
+
+.history-title{
+    padding:5px 18px 8px;
+    font-size:12px;
+    font-weight:800;
+    color:#888;
+    letter-spacing:.5px;
+}
+
+.history{
+    flex:1;
+    overflow-y:auto;
+    padding:0 10px 10px;
+}
+
+.history::-webkit-scrollbar{
+    width:5px;
+}
+
+.history::-webkit-scrollbar-thumb{
+    background:#39393d;
+    border-radius:10px;
+}
+
+.history-item{
+    width:100%;
+    min-height:48px;
+    padding:0 8px 0 13px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    cursor:pointer;
+    color:#ddd;
+    margin-bottom:3px;
+    transition:.15s;
+}
+
+.history-item:hover{
+    background:#242427;
+}
+
+.history-item.active{
+    background:#29292d;
+}
+
+.history-name{
+    flex:1;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:14px;
+}
+
+.history-menu{
+    width:38px;
+    height:38px;
+    flex-shrink:0;
+    border:0;
+    border-radius:9px;
+    background:transparent;
+    color:#aaa;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.history-menu:hover{
+    background:#353539;
+    color:white;
+}
+
+.sidebar-bottom{
+    border-top:1px solid #29292c;
+    padding:10px;
+}
+
+.side-btn{
+    width:100%;
+    height:45px;
+    border:0;
+    background:transparent;
+    color:#bdbdc1;
+    border-radius:10px;
+    text-align:left;
+    padding:0 12px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.side-btn:hover{
+    background:#242427;
+    color:white;
+}
+
+.empty-history{
+    color:#777;
+    text-align:center;
+    padding:25px 10px;
+    font-size:13px;
+}
+
+/* =========================
+   MOBILE OVERLAY
+========================= */
+
+.sidebar-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    z-index:40;
+    display:none;
+}
+
+.sidebar-overlay.show{
+    display:block;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    flex:1;
+    min-width:0;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    background:#101012;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    height:66px;
+    min-height:66px;
+    border-bottom:1px solid #29292c;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:relative;
+    z-index:10;
+    background:rgba(16,16,18,.95);
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    min-width:0;
+}
+
+.menu-btn{
+    width:40px;
+    height:40px;
+    border:0;
+    background:transparent;
+    color:#ddd;
+    font-size:25px;
+    cursor:pointer;
+    border-radius:9px;
+    display:none;
+}
+
+.menu-btn:hover{
+    background:#222225;
+}
+
+.brand{
+    font-size:20px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.header-btn{
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:10px;
+    background:transparent;
+    color:#aaa;
+    cursor:pointer;
+    font-size:19px;
+}
+
+.header-btn:hover{
+    background:#232326;
+    color:white;
+}
+
+/* =========================
+   CHAT AREA
+========================= */
+
+.chat-area{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
+}
+
+.chat-area::-webkit-scrollbar{
+    width:7px;
+}
+
+.chat-area::-webkit-scrollbar-thumb{
+    background:#333337;
+    border-radius:10px;
+}
+
+.messages{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:35px 25px 160px;
+}
+
+/* =========================
+   WELCOME
+========================= */
+
+.welcome{
+    min-height:calc(100dvh - 220px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px 0;
+}
+
+.welcome-logo{
+    width:110px;
+    height:110px;
+    border-radius:30px;
+    background:linear-gradient(135deg,#ff8a61,#b75cff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:58px;
+    font-weight:900;
+    margin-bottom:25px;
+    box-shadow:0 15px 55px rgba(190,80,220,.18);
+}
+
+.welcome h1{
+    font-size:45px;
+    line-height:1.1;
+    margin-bottom:12px;
+    font-weight:800;
+}
+
+.welcome p{
+    color:#98989e;
+    font-size:17px;
+    line-height:1.7;
+    max-width:650px;
+}
+
+.suggestions{
+    width:100%;
+    max-width:760px;
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.suggestion{
+    min-height:70px;
+    text-align:left;
+    padding:15px 17px;
+    border:1px solid #303035;
+    border-radius:15px;
+    background:#171719;
+    color:#ddd;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.suggestion:hover{
+    background:#232326;
+    border-color:#505056;
+    transform:translateY(-1px);
+}
+
+.suggestion-title{
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.suggestion-text{
+    color:#85858b;
+    font-size:12px;
+    line-height:1.4;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message{
+    display:flex;
+    gap:13px;
+    margin-bottom:28px;
+    min-width:0;
+}
+
+.message.user{
+    justify-content:flex-end;
+}
+
+.avatar{
+    width:34px;
+    height:34px;
+    min-width:34px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    font-weight:800;
+    background:#29292d;
+}
+
+.user .avatar{
+    background:linear-gradient(135deg,#ff8a61,#b75cff);
+}
+
+.message-body{
+    min-width:0;
+    max-width:calc(100% - 50px);
+}
+
+.message.user .message-body{
+    max-width:80%;
+}
+
+.message-content{
+    line-height:1.7;
+    font-size:15px;
+    color:#e8e8e9;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.user .message-content{
+    background:#29292d;
+    border-radius:18px;
+    padding:12px 16px;
+}
+
+.message-actions{
+    display:flex;
+    gap:4px;
+    margin-top:7px;
+    opacity:.7;
+}
+
+.action-btn{
+    border:0;
+    background:transparent;
+    color:#999;
+    cursor:pointer;
+    border-radius:7px;
+    padding:5px 8px;
+    font-size:12px;
+}
+
+.action-btn:hover{
+    background:#242427;
+    color:#fff;
+}
+
+/* =========================
+   MARKDOWN
+========================= */
+
+.message-content h1,
+.message-content h2,
+.message-content h3{
+    margin:20px 0 9px;
+    line-height:1.3;
+}
+
+.message-content h1{font-size:24px}
+.message-content h2{font-size:20px}
+.message-content h3{font-size:17px}
+
+.message-content p{
+    margin:7px 0;
+}
+
+.message-content ul,
+.message-content ol{
+    padding-left:23px;
+    margin:8px 0;
+}
+
+.message-content li{
+    margin:4px 0;
+}
+
+.message-content blockquote{
+    border-left:3px solid #777;
+    padding-left:13px;
+    color:#aaa;
+    margin:12px 0;
+}
+
+.message-content a{
+    color:#9f8cff;
+}
+
+.inline-code{
+    background:#27272b;
+    padding:2px 6px;
+    border-radius:5px;
+    font-family:monospace;
+    font-size:.9em;
+}
+
+.code-wrap{
+    position:relative;
+    margin:14px 0;
+    border:1px solid #303035;
+    border-radius:12px;
+    overflow:hidden;
+    background:#0b0b0d;
+}
+
+.code-head{
+    height:37px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 10px 0 13px;
+    background:#18181b;
+    color:#85858b;
+    font-size:11px;
+}
+
+.code-copy{
+    border:0;
+    background:#28282c;
+    color:#bbb;
+    padding:5px 8px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.code-scroll{
+    overflow-x:auto;
+    max-width:100%;
+}
+
+.code-scroll pre{
+    margin:0;
+    padding:15px;
+    min-width:max-content;
+    font-family:"Courier New",monospace;
+    font-size:13px;
+    line-height:1.6;
+    color:#ddd;
+}
+
+/* =========================
+   TYPING
+========================= */
+
+.typing{
+    display:flex;
+    gap:5px;
+    padding:12px 0;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    background:#888;
+    border-radius:50%;
+    animation:blink 1.2s infinite;
+}
+
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+
+@keyframes blink{
+    0%,80%,100%{opacity:.2}
+    40%{opacity:1}
+}
+
+/* =========================
+   COMPOSER
+========================= */
+
+.composer-area{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    padding:15px 20px 18px;
+    background:linear-gradient(
+        to top,
+        #101012 65%,
+        rgba(16,16,18,0)
+    );
+    z-index:20;
+}
+
+.composer{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    border:1px solid #3a3a3f;
+    background:#1a1a1d;
+    border-radius:22px;
+    padding:11px;
+    box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.file-preview{
+    display:none;
+    padding:6px 7px 8px;
+}
+
+.file-preview.show{
+    display:flex;
+}
+
+.file-chip{
+    max-width:100%;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 10px;
+    border-radius:9px;
+    background:#29292d;
+    font-size:12px;
+    color:#bbb;
+}
+
+.file-chip span{
+    max-width:200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.file-remove{
+    border:0;
+    background:transparent;
+    color:#999;
+    cursor:pointer;
+}
+
+.input-row{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+}
+
+.message-input{
+    flex:1;
+    min-width:0;
+    resize:none;
+    max-height:180px;
+    min-height:44px;
+    border:0;
+    outline:none;
+    background:transparent;
+    color:#eee;
+    font-size:15px;
+    line-height:1.5;
+    padding:9px 8px;
+    font-family:inherit;
+}
+
+.message-input::placeholder{
+    color:#74747a;
+}
+
+.attach-btn,
+.send-btn,
+.stop-btn{
+    width:46px;
+    height:46px;
+    flex-shrink:0;
+    border:0;
+    border-radius:13px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.attach-btn{
+    background:transparent;
+    color:#aaa;
+}
+
+.attach-btn:hover{
+    background:#28282b;
+    color:white;
+}
+
+.send-btn{
+    background:#e77b57;
+    color:white;
+}
+
+.send-btn:hover{
+    filter:brightness(1.1);
+}
+
+.send-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.stop-btn{
+    background:#b74b4b;
+    color:white;
+    display:none;
+}
+
+.composer-note{
+    text-align:center;
+    color:#68686e;
+    font-size:11px;
+    padding:7px 5px 1px;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(4px);
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-overlay.show{
+    display:flex;
+}
+
+.modal{
+    width:100%;
+    max-width:420px;
+    background:#1b1b1e;
+    border:1px solid #37373b;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.modal h3{
+    font-size:20px;
+    margin-bottom:8px;
+}
+
+.modal p{
+    color:#999;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.modal-input{
+    width:100%;
+    height:46px;
+    margin-top:17px;
+    border-radius:10px;
+    border:1px solid #39393d;
+    background:#111113;
+    color:#fff;
+    outline:none;
+    padding:0 13px;
+    font-size:14px;
+}
+
+.modal-input:focus{
+    border-color:#777;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    margin-top:20px;
+}
+
+.modal-btn{
+    min-height:42px;
+    padding:0 15px;
+    border:0;
+    border-radius:9px;
+    cursor:pointer;
+    background:#29292d;
+    color:#ddd;
+    font-weight:600;
+}
+
+.modal-btn.primary{
+    background:#e77b57;
+    color:white;
+}
+
+.modal-btn.danger{
+    background:#9e4141;
+    color:white;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:95px;
+    transform:translate(-50%,20px);
+    background:#28282c;
+    border:1px solid #414147;
+    color:white;
+    padding:11px 15px;
+    border-radius:10px;
+    font-size:13px;
+    z-index:200;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    max-width:90vw;
+    text-align:center;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* =========================
+   LIGHT MODE
+========================= */
+
+body.light{
+    background:#f7f7f8;
+    color:#171719;
+}
+
+body.light .main{
+    background:#f7f7f8;
+}
+
+body.light .header{
+    background:rgba(247,247,248,.95);
+    border-color:#ddd;
+}
+
+body.light .sidebar{
+    background:#fff;
+    border-color:#ddd;
+}
+
+body.light .new-chat,
+body.light .search-box{
+    background:#f4f4f5;
+    color:#222;
+    border-color:#ddd;
+}
+
+body.light .history-item:hover,
+body.light .history-item.active{
+    background:#ededee;
+}
+
+body.light .history-item{
+    color:#333;
+}
+
+body.light .brand{
+    color:#111;
+}
+
+body.light .message-content{
+    color:#222;
+}
+
+body.light .user .message-content{
+    background:#e9e9eb;
+}
+
+body.light .composer{
+    background:#fff;
+    border-color:#d4d4d7;
+}
+
+body.light .message-input{
+    color:#222;
+}
+
+body.light .suggestion{
+    background:#fff;
+    border-color:#ddd;
+    color:#333;
+}
+
+body.light .suggestion:hover{
+    background:#f1f1f2;
+}
+
+body.light .modal{
+    background:#fff;
+    border-color:#ddd;
+}
+
+body.light .modal-input{
+    background:#f5f5f6;
+    color:#222;
+}
+
+body.light .code-wrap{
+    background:#101012;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:280px;
+        min-width:280px;
+    }
+
+    .messages{
+        max-width:100%;
+        padding-left:20px;
+        padding-right:20px;
+    }
+
+    .welcome h1{
+        font-size:38px;
+    }
+
+    .welcome p{
+        font-size:16px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    html,body{
+        height:100dvh;
+    }
+
+    .sidebar{
+        position:fixed;
+        top:0;
+        left:0;
+        bottom:0;
+        width:min(82vw,300px);
+        min-width:0;
+        transform:translateX(-105%);
+        box-shadow:10px 0 40px rgba(0,0,0,.45);
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .header{
+        height:58px;
+        min-height:58px;
+        padding:0 8px;
+    }
+
+    .header-left{
+        gap:5px;
+    }
+
+    .brand{
+        font-size:18px;
+    }
+
+    .header-btn{
+        width:38px;
+        height:38px;
+    }
+
+    .messages{
+        padding:22px 13px 150px;
+    }
+
+    .welcome{
+        min-height:calc(100dvh - 220px);
+        padding:25px 8px;
+        justify-content:center;
+    }
+
+    .welcome-logo{
+        width:82px;
+        height:82px;
+        border-radius:23px;
+        font-size:42px;
+        margin-bottom:20px;
+    }
+
+    .welcome h1{
+        font-size:30px;
+        line-height:1.15;
+        margin-bottom:10px;
+    }
+
+    .welcome p{
+        font-size:14px;
+        line-height:1.6;
+        max-width:340px;
+    }
+
+    .suggestions{
+        grid-template-columns:1fr;
+        gap:8px;
+        margin-top:22px;
+        max-width:390px;
+    }
+
+    .suggestion{
+        min-height:61px;
+        padding:12px 13px;
+        border-radius:12px;
+    }
+
+    .suggestion-title{
+        font-size:13px;
+    }
+
+    .suggestion-text{
+        font-size:11px;
+    }
+
+    .message{
+        gap:8px;
+        margin-bottom:23px;
+    }
+
+    .avatar{
+        width:30px;
+        height:30px;
+        min-width:30px;
+        border-radius:9px;
+        font-size:13px;
+    }
+
+    .message-body{
+        max-width:calc(100% - 38px);
+    }
+
+    .message.user .message-body{
+        max-width:86%;
+    }
+
+    .message-content{
+        font-size:14px;
+        line-height:1.65;
+    }
+
+    .user .message-content{
+        padding:10px 13px;
+        border-radius:15px;
+    }
+
+    .composer-area{
+        padding:8px 9px calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .composer{
+        border-radius:18px;
+        padding:7px;
+    }
+
+    .message-input{
+        min-height:42px;
+        max-height:140px;
+        font-size:14px;
+        padding:8px 7px;
+    }
+
+    .attach-btn,
+    .send-btn,
+    .stop-btn{
+        width:42px;
+        height:42px;
+        border-radius:11px;
+        font-size:18px;
+    }
+
+    .composer-note{
+        font-size:9px;
+        padding:5px 2px 1px;
+    }
+
+    .code-scroll pre{
+        font-size:11px;
+        padding:12px;
+    }
+
+    .code-head{
+        height:34px;
+        font-size:10px;
+    }
+
+    .action-btn{
+        font-size:11px;
+        padding:4px 6px;
+    }
+
+    .modal-overlay{
+        padding:12px;
+    }
+
+    .modal{
+        border-radius:15px;
+        padding:18px;
+    }
+}
+
+/* =========================
+   VERY SMALL PHONE
+========================= */
+
+@media(max-width:380px){
+
+    .brand{
+        font-size:17px;
+    }
+
+    .header-btn{
+        width:35px;
+    }
+
+    .messages{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .welcome h1{
+        font-size:27px;
+    }
+
+    .welcome-logo{
+        width:72px;
+        height:72px;
+        font-size:36px;
+    }
+
+    .welcome p{
+        font-size:13px;
+    }
+
+    .message-content{
+        font-size:13px;
+    }
+
+    .message.user .message-body{
+        max-width:90%;
+    }
+
+    .composer-area{
+        padding-left:6px;
+        padding-right:6px;
+    }
+
+    .attach-btn,
+    .send-btn,
+    .stop-btn{
+        width:39px;
+        height:39px;
+    }
+}
+
+/* =========================
+   SAFE AREA
+========================= */
+
+@supports(padding:max(0px)){
+    .composer-area{
+        padding-bottom:max(10px, env(safe-area-inset-bottom));
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-top">
+
+            <div class="logo-row">
+                <div class="logo">✦</div>
+                <div class="logo-title">NeoAI</div>
+            </div>
+
+            <button class="new-chat" onclick="createNewChat()">
+                ＋ New chat
+            </button>
+
+            <input
+                id="searchChats"
+                class="search-box"
+                placeholder="Search chats..."
+                oninput="renderHistory()"
+            >
+
+        </div>
+
+        <div class="history-title">RECENT</div>
+
+        <div class="history" id="history"></div>
+
+        <div class="sidebar-bottom">
+
+            <button class="side-btn" onclick="toggleDarkMode()">
+                ◐ &nbsp; Dark mode
+            </button>
+
+            <button class="side-btn" onclick="openDeleteAllModal()">
+                🗑 &nbsp; Delete all chats
+            </button>
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div class="header-left">
+
+                <button
+                    class="menu-btn"
+                    onclick="toggleSidebar()"
+                    aria-label="Menu"
+                >
+                    ☰
+                </button>
+
+                <!-- SELALU NeoAI -->
+                <div class="brand">NeoAI</div>
+
+            </div>
+
+            <div class="header-right">
+
+                <button
+                    class="header-btn"
+                    onclick="createNewChat()"
+                    title="New chat"
+                >
+                    ＋
+                </button>
+
+                <button
+                    class="header-btn"
+                    onclick="toggleDarkMode()"
+                    title="Dark mode"
+                >
+                    ◐
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- CHAT -->
+        <section class="chat-area" id="chatArea">
+
+            <div class="messages" id="messages"></div>
+
+        </section>
+
+        <!-- COMPOSER -->
+        <div class="composer-area">
+
+            <div class="composer">
+
+                <div class="file-preview" id="filePreview">
+
+                    <div class="file-chip">
+
+                        <span id="fileName"></span>
+
+                        <button
+                            class="file-remove"
+                            onclick="removeFile()"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="input-row">
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        hidden
+                        onchange="handleFile(event)"
+                    >
+
+                    <button
+                        class="attach-btn"
+                        onclick="document.getElementById('fileInput').click()"
+                        title="Upload file"
+                    >
+                        ＋
+                    </button>
+
+                    <textarea
+                        id="messageInput"
+                        class="message-input"
+                        rows="1"
+                        placeholder="Message NeoAI..."
+                        autocomplete="off"
+                    ></textarea>
+
+                    <button
+                        id="sendBtn"
+                        class="send-btn"
+                        onclick="sendMessage()"
+                        title="Send"
+                    >
+                        ↑
+                    </button>
+
+                    <button
+                        id="stopBtn"
+                        class="stop-btn"
+                        onclick="stopGeneration()"
+                        title="Stop"
+                    >
+                        ■
+                    </button>
+
+                </div>
+
+                <div class="composer-note">
+                    NeoAI dapat membuat kesalahan. Periksa informasi penting.
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================
+     RENAME MODAL
+========================= -->
+
+<div class="modal-overlay" id="renameModal">
+
+    <div class="modal">
+
+        <h3>Rename chat</h3>
+
+        <p>
+            Masukkan nama baru untuk percakapan ini.
+        </p>
+
+        <input
+            id="renameInput"
+            class="modal-input"
+            placeholder="Nama chat..."
+            maxlength="60"
+        >
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn"
+                onclick="closeRenameModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                class="modal-btn primary"
+                onclick="saveRename()"
+            >
+                Simpan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     DELETE MODAL
+========================= -->
+
+<div class="modal-overlay" id="deleteModal">
+
+    <div class="modal">
+
+        <h3>Hapus chat?</h3>
+
+        <p id="deleteText">
+            Chat ini akan dihapus dari riwayat.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn"
+                onclick="closeDeleteModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                class="modal-btn danger"
+                onclick="confirmDelete()"
+            >
+                Hapus
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     DELETE ALL MODAL
+========================= -->
+
+<div class="modal-overlay" id="deleteAllModal">
+
+    <div class="modal">
+
+        <h3>Hapus semua chat?</h3>
+
+        <p>
+            Semua percakapan yang tersimpan di perangkat ini akan dihapus.
+            Tindakan ini tidak dapat dibatalkan.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn"
+                onclick="closeDeleteAllModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                class="modal-btn danger"
+                onclick="confirmDeleteAll()"
+            >
+                Hapus semua
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const API_BASE =
+    "https://api.nexadev.my.id/ai/chatgptpro?q=";
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let chats = [];
+let currentChatId = null;
+
+let abortController = null;
+let isGenerating = false;
+
+let selectedFile = null;
+
+let renameTargetId = null;
+let deleteTargetId = null;
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    loadChats();
+
+    if(chats.length === 0){
+
+        createNewChat(true);
+
+    }else{
+
+        currentChatId = chats[0].id;
+        renderHistory();
+        renderCurrentChat();
+
+    }
+
+    setupTextarea();
+
+    document.addEventListener("keydown", handleKeyboard);
+
+});
+
+
+/* =====================================================
+   CHAT STORAGE
+===================================================== */
+
+function loadChats(){
+
+    try{
+
+        const saved =
+            localStorage.getItem("neoai_chats");
+
+        chats = saved
+            ? JSON.parse(saved)
+            : [];
+
+        if(!Array.isArray(chats)){
+            chats = [];
+        }
+
+    }catch(e){
+
+        chats = [];
+
+    }
+
+}
+
+
+function saveChats(){
+
+    localStorage.setItem(
+        "neoai_chats",
+        JSON.stringify(chats)
+    );
+
+}
+
+
+/* =====================================================
+   CREATE NEW CHAT
+===================================================== */
+
+function createNewChat(silent=false){
+
+    const chat = {
+
+        id:
+            Date.now().toString() +
+            Math.random().toString(16).slice(2),
+
+        title:"New chat",
+
+        messages:[],
+
+        createdAt:Date.now()
+
+    };
+
+    chats.unshift(chat);
+
+    currentChatId = chat.id;
+
+    saveChats();
+
+    renderHistory();
+
+    renderCurrentChat();
+
+    closeSidebar();
+
+    if(!silent){
+
+        document.getElementById("messageInput").focus();
+
+    }
+
+}
+
+
+/* =====================================================
+   CURRENT CHAT
+===================================================== */
+
+function getCurrentChat(){
+
+    return chats.find(
+        chat => chat.id === currentChatId
+    );
+
+}
+
+
+/* =====================================================
+   RENDER HISTORY
+===================================================== */
+
+function renderHistory(){
+
+    const container =
+        document.getElementById("history");
+
+    const search =
+        document.getElementById("searchChats")
+        .value
+        .toLowerCase()
+        .trim();
+
+    let filtered = chats;
+
+    if(search){
+
+        filtered = chats.filter(chat =>
+            chat.title
+            .toLowerCase()
+            .includes(search)
+        );
+
+    }
+
+    if(filtered.length === 0){
+
+        container.innerHTML = `
+            <div class="empty-history">
+                Belum ada chat.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML =
+        filtered.map(chat => `
+
+            <div
+                class="history-item ${chat.id === currentChatId ? "active" : ""}"
+                onclick="selectChat('${chat.id}')"
+            >
+
+                <div class="history-name">
+                    ${escapeHTML(chat.title)}
+                </div>
+
+                <button
+                    class="history-menu"
+                    onclick="event.stopPropagation(); openChatOptions('${chat.id}')"
+                >
+                    ⋯
+                </button>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+/* =====================================================
+   SELECT CHAT
+===================================================== */
+
+function selectChat(id){
+
+    currentChatId = id;
+
+    saveChats();
+
+    renderHistory();
+
+    renderCurrentChat();
+
+    closeSidebar();
+
+}
+
+
+/* =====================================================
+   CHAT OPTIONS
+===================================================== */
+
+function openChatOptions(id){
+
+    const chat =
+        chats.find(c => c.id === id);
+
+    if(!chat) return;
+
+    const choice = document.createElement("div");
+
+    choice.style.position = "fixed";
+    choice.style.zIndex = "300";
+    choice.style.background = "#202024";
+    choice.style.border = "1px solid #3a3a3f";
+    choice.style.borderRadius = "13px";
+    choice.style.padding = "6px";
+    choice.style.boxShadow = "0 15px 50px rgba(0,0,0,.5)";
+    choice.style.width = "180px";
+    choice.style.left = "50%";
+    choice.style.top = "50%";
+    choice.style.transform = "translate(-50%,-50%)";
+
+    choice.innerHTML = `
+
+        <button
+            style="
+                width:100%;
+                border:0;
+                background:transparent;
+                color:#ddd;
+                padding:12px;
+                text-align:left;
+                border-radius:8px;
+                cursor:pointer;
+            "
+            onclick="this.parentElement.remove();openRenameModal('${id}')"
+        >
+            ✏️ &nbsp; Rename
+        </button>
+
+        <button
+            style="
+                width:100%;
+                border:0;
+                background:transparent;
+                color:#ff8585;
+                padding:12px;
+                text-align:left;
+                border-radius:8px;
+                cursor:pointer;
+            "
+            onclick="this.parentElement.remove();openDeleteModal('${id}')"
+        >
+            🗑️ &nbsp; Delete
+        </button>
+
+    `;
+
+    document.body.appendChild(choice);
+
+    setTimeout(() => {
+
+        const close = (e) => {
+
+            if(!choice.contains(e.target)){
+
+                choice.remove();
+
+                document.removeEventListener(
+                    "click",
+                    close
+                );
+
+            }
+
+        };
+
+        document.addEventListener(
+            "click",
+            close
+        );
+
+    },20);
+
+}
+
+
+/* =====================================================
+   RENAME
+===================================================== */
+
+function openRenameModal(id){
+
+    renameTargetId = id;
+
+    const chat =
+        chats.find(c => c.id === id);
+
+    if(!chat) return;
+
+    const modal =
+        document.getElementById("renameModal");
+
+    const input =
+        document.getElementById("renameInput");
+
+    input.value = chat.title;
+
+    modal.classList.add("show");
+
+    setTimeout(() => {
+
+        input.focus();
+
+        input.select();
+
+    },100);
+
+}
+
+
+function closeRenameModal(){
+
+    renameTargetId = null;
+
+    document
+        .getElementById("renameModal")
+        .classList.remove("show");
+
+}
+
+
+function saveRename(){
+
+    if(!renameTargetId) return;
+
+    const input =
+        document.getElementById("renameInput");
+
+    const name =
+        input.value.trim();
+
+    if(!name){
+
+        showToast("Nama chat tidak boleh kosong.");
+
+        return;
+
+    }
+
+    const chat =
+        chats.find(c => c.id === renameTargetId);
+
+    if(chat){
+
+        chat.title = name;
+
+        saveChats();
+
+        renderHistory();
+
+    }
+
+    closeRenameModal();
+
+    showToast("Nama chat berhasil diubah.");
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+function openDeleteModal(id){
+
+    deleteTargetId = id;
+
+    const chat =
+        chats.find(c => c.id === id);
+
+    if(!chat) return;
+
+    document.getElementById("deleteText").textContent =
+        `Percakapan "${chat.title}" akan dihapus dari riwayat.`;
+
+    document
+        .getElementById("deleteModal")
+        .classList.add("show");
+
+}
+
+
+function closeDeleteModal(){
+
+    deleteTargetId = null;
+
+    document
+        .getElementById("deleteModal")
+        .classList.remove("show");
+
+}
+
+
+function confirmDelete(){
+
+    if(!deleteTargetId) return;
+
+    const deletingId =
+        deleteTargetId;
+
+    chats =
+        chats.filter(
+            chat => chat.id !== deletingId
+        );
+
+    if(currentChatId === deletingId){
+
+        if(chats.length > 0){
+
+            currentChatId = chats[0].id;
+
+        }else{
+
+            currentChatId = null;
+
+        }
+
+    }
+
+    saveChats();
+
+    closeDeleteModal();
+
+    if(!currentChatId){
+
+        createNewChat(true);
+
+    }else{
+
+        renderHistory();
+        renderCurrentChat();
+
+    }
+
+    showToast("Chat berhasil dihapus.");
+
+}
+
+
+/* =====================================================
+   DELETE ALL
+===================================================== */
+
+function openDeleteAllModal(){
+
+    if(chats.length === 0){
+
+        showToast("Tidak ada chat untuk dihapus.");
+
+        return;
+
+    }
+
+    document
+        .getElementById("deleteAllModal")
+        .classList.add("show");
+
+}
+
+
+function closeDeleteAllModal(){
+
+    document
+        .getElementById("deleteAllModal")
+        .classList.remove("show");
+
+}
+
+
+function confirmDeleteAll(){
+
+    chats = [];
+
+    currentChatId = null;
+
+    saveChats();
+
+    closeDeleteAllModal();
+
+    createNewChat(true);
+
+    renderHistory();
+
+    renderCurrentChat();
+
+    showToast("Semua chat berhasil dihapus.");
+
+}
+
+
+/* =====================================================
+   RENDER CURRENT CHAT
+===================================================== */
+
+function renderCurrentChat(){
+
+    const messages =
+        document.getElementById("messages");
+
+    const chat =
+        getCurrentChat();
+
+    if(!chat || chat.messages.length === 0){
+
+        messages.innerHTML = `
+
+            <div class="welcome">
+
+                <div class="welcome-logo">
+                    ✦
+                </div>
+
+                <h1>
+                    How can I help you?
+                </h1>
+
+                <p>
+                    Selamat datang di NeoAI.
+                    Tanyakan apa saja, minta bantuan coding,
+                    penjelasan, ide, atau analisis.
+                </p>
+
+                <div class="suggestions">
+
+                    <button
+                        class="suggestion"
+                        onclick="useSuggestion('Jelaskan apa itu kecerdasan buatan dengan bahasa sederhana')"
+                    >
+                        <div class="suggestion-title">
+                            🤖 Jelaskan AI
+                        </div>
+
+                        <div class="suggestion-text">
+                            Jelaskan kecerdasan buatan dengan bahasa sederhana.
+                        </div>
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="useSuggestion('Bantu saya membuat website modern menggunakan HTML, CSS, dan JavaScript')"
+                    >
+                        <div class="suggestion-title">
+                            💻 Bantu coding
+                        </div>
+
+                        <div class="suggestion-text">
+                            Buatkan website modern dengan HTML, CSS, dan JavaScript.
+                        </div>
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="useSuggestion('Berikan saya 5 ide project coding yang menarik untuk pemula')"
+                    >
+                        <div class="suggestion-title">
+                            💡 Cari ide
+                        </div>
+
+                        <div class="suggestion-text">
+                            Berikan ide project coding yang menarik.
+                        </div>
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="useSuggestion('Ajarkan saya JavaScript dari dasar sampai bisa membuat project sederhana')"
+                    >
+                        <div class="suggestion-title">
+                            📚 Belajar
+                        </div>
+
+                        <div class="suggestion-text">
+                            Belajar JavaScript dari dasar.
+                        </div>
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    messages.innerHTML =
+        chat.messages
+        .map((msg,index) =>
+            renderMessage(msg,index)
+        )
+        .join("");
+
+    scrollToBottom();
+
+}
+
+
+/* =====================================================
+   RENDER MESSAGE
+===================================================== */
+
+function renderMessage(msg,index){
+
+    const isUser =
+        msg.role === "user";
+
+    return `
+
+        <div class="message ${isUser ? "user" : "assistant"}">
+
+            ${
+                !isUser
+                ? `<div class="avatar">✦</div>`
+                : ""
+            }
+
+            <div class="message-body">
+
+                <div class="message-content">
+
+                    ${
+                        isUser
+                        ? escapeHTML(msg.content)
+                        : markdownToHTML(msg.content)
+                    }
+
+                </div>
+
+                <div class="message-actions">
+
+                    ${
+                        !isUser
+                        ? `
+                            <button
+                                class="action-btn"
+                                onclick="copyMessage(${index})"
+                            >
+                                📋 Copy
+                            </button>
+
+                            <button
+                                class="action-btn"
+                                onclick="regenerate(${index})"
+                            >
+                                ↻ Regenerate
+                            </button>
+                        `
+                        : `
+                            <button
+                                class="action-btn"
+                                onclick="copyMessage(${index})"
+                            >
+                                📋 Copy
+                            </button>
+                        `
+                    }
+
+                </div>
+
+            </div>
+
+            ${
+                isUser
+                ? `<div class="avatar">U</div>`
+                : ""
+            }
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
+
+async function sendMessage(){
+
+    if(isGenerating) return;
+
+    const input =
+        document.getElementById("messageInput");
+
+    const text =
+        input.value.trim();
+
+    if(!text && !selectedFile) return;
+
+    const chat =
+        getCurrentChat();
+
+    if(!chat) return;
+
+    let finalText = text;
+
+    if(selectedFile){
+
+        finalText +=
+            `\n\n[File uploaded: ${selectedFile.name}]`;
+
+    }
+
+    chat.messages.push({
+
+        role:"user",
+
+        content:finalText
+
+    });
+
+    if(chat.title === "New chat"){
+
+        chat.title =
+            text
+            ? text.slice(0,45)
+            : selectedFile?.name || "New chat";
+
+    }
+
+    input.value = "";
+
+    autoResizeTextarea();
+
+    removeFile();
+
+    saveChats();
+
+    renderHistory();
+
+    renderCurrentChat();
+
+    await generateAI(chat);
+
+}
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function generateAI(chat){
+
+    isGenerating = true;
+
+    abortController =
+        new AbortController();
+
+    updateGenerationUI(true);
+
+    const aiMessage = {
+
+        role:"assistant",
+
+        content:""
+
+    };
+
+    chat.messages.push(aiMessage);
+
+    renderCurrentChat();
+
+    try{
+
+        const lastMessages =
+            chat.messages
+            .slice(-12)
+            .filter(m =>
+                m.role === "user" ||
+                m.role === "assistant"
+            );
+
+        /*
+         * API yang digunakan:
+         * https://api.nexadev.my.id/ai/chatgptpro?q=
+         *
+         * Karena endpoint menerima parameter q,
+         * percakapan dikirim sebagai satu teks.
+         */
+
+        let prompt = "";
+
+        for(const msg of lastMessages){
+
+            prompt +=
+                (msg.role === "user"
+                    ? "User: "
+                    : "Assistant: ")
+                + msg.content
+                + "\n\n";
+
+        }
+
+        prompt += "Assistant:";
+
+        const url =
+            API_BASE +
+            encodeURIComponent(prompt);
+
+        console.log("REQUEST API:",url);
+
+        const response =
+            await fetch(url,{
+                method:"GET",
+                signal:abortController.signal,
+                headers:{
+                    "Accept":"application/json"
+                }
+            });
+
+        if(!response.ok){
+
+            throw new Error(
+                "HTTP " + response.status
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+        console.log("API RESPONSE:",data);
+
+        const answer =
+            extractAPIAnswer(data);
+
+        if(!answer){
+
+            throw new Error(
+                "Response API tidak memiliki teks jawaban."
+            );
+
+        }
+
+        /*
+         * Menampilkan jawaban sedikit demi sedikit
+         * agar terasa seperti AI sedang mengetik.
+         */
+
+        for(let i=0;i<answer.length;i++){
+
+            if(abortController.signal.aborted){
+
+                aiMessage.content +=
+                    "\n\n*Generation stopped.*";
+
+                break;
+
+            }
+
+            aiMessage.content =
+                answer.slice(0,i+1);
+
+            if(
+                i % 3 === 0 ||
+                i === answer.length - 1
+            ){
+
+                renderCurrentChat();
+
+            }
+
+            await sleep(5);
+
+        }
+
+        saveChats();
+
+        renderHistory();
+
+        renderCurrentChat();
+
+    }catch(error){
+
+        console.error("API ERROR:",error);
+
+        if(error.name === "AbortError"){
+
+            if(!aiMessage.content){
+
+                aiMessage.content =
+                    "*Generation stopped.*";
+
+            }
+
+        }else{
+
+            aiMessage.content =
+                `⚠️ **Gagal menghubungkan ke API.**
+
+\`${escapeMarkdown(String(error.message))}\`
+
+Pastikan endpoint API dapat diakses dari browser dan mengizinkan **CORS** untuk website ini.`;
+
+            showToast(
+                "Gagal menghubungkan ke API."
+            );
+
+        }
+
+        saveChats();
+
+        renderCurrentChat();
+
+    }finally{
+
+        isGenerating = false;
+
+        abortController = null;
+
+        updateGenerationUI(false);
+
+    }
+
+}
+
+
+/* =====================================================
+   EXTRACT API RESPONSE
+===================================================== */
+
+function extractAPIAnswer(data){
+
+    if(typeof data === "string"){
+
+        return data;
+
+    }
+
+    if(!data) return "";
+
+    const possibleKeys = [
+
+        "answer",
+        "response",
+        "result",
+        "text",
+        "message",
+        "content",
+        "reply",
+        "output"
+
+    ];
+
+    for(const key of possibleKeys){
+
+        if(
+            typeof data[key] === "string" &&
+            data[key].trim()
+        ){
+
+            return data[key];
+
+        }
+
+    }
+
+    if(data.data){
+
+        if(typeof data.data === "string"){
+
+            return data.data;
+
+        }
+
+        if(typeof data.data === "object"){
+
+            const nested =
+                extractAPIAnswer(data.data);
+
+            if(nested) return nested;
+
+        }
+
+    }
+
+    if(data.choices && Array.isArray(data.choices)){
+
+        const choice =
+            data.choices[0];
+
+        if(choice){
+
+            if(choice.message){
+
+                if(
+                    typeof choice.message.content ===
+                    "string"
+                ){
+
+                    return choice.message.content;
+
+                }
+
+            }
+
+            if(
+                typeof choice.text === "string"
+            ){
+
+                return choice.text;
+
+            }
+
+        }
+
+    }
+
+    return "";
+
+}
+
+
+/* =====================================================
+   STOP GENERATION
+===================================================== */
+
+function stopGeneration(){
+
+    if(
+        isGenerating &&
+        abortController
+    ){
+
+        abortController.abort();
+
+        showToast(
+            "Generation dihentikan."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GENERATION UI
+===================================================== */
+
+function updateGenerationUI(active){
+
+    const send =
+        document.getElementById("sendBtn");
+
+    const stop =
+        document.getElementById("stopBtn");
+
+    if(active){
+
+        send.style.display = "none";
+
+        stop.style.display = "flex";
+
+    }else{
+
+        send.style.display = "flex";
+
+        stop.style.display = "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   REGENERATE
+===================================================== */
+
+async function regenerate(index){
+
+    if(isGenerating) return;
+
+    const chat =
+        getCurrentChat();
+
+    if(!chat) return;
+
+    if(
+        chat.messages[index]?.role !==
+        "assistant"
+    ){
+
+        return;
+
+    }
+
+    chat.messages.splice(index,1);
+
+    saveChats();
+
+    renderCurrentChat();
+
+    await generateAI(chat);
+
+}
+
+
+/* =====================================================
+   COPY
+===================================================== */
+
+async function copyMessage(index){
+
+    const chat =
+        getCurrentChat();
+
+    if(!chat) return;
+
+    const msg =
+        chat.messages[index];
+
+    if(!msg) return;
+
+    try{
+
+        await navigator.clipboard.writeText(
+            msg.content
+        );
+
+        showToast("Berhasil disalin.");
+
+    }catch(e){
+
+        showToast("Tidak dapat menyalin.");
+
+    }
+
+}
+
+
+/* =====================================================
+   SUGGESTION
+===================================================== */
+
+function useSuggestion(text){
+
+    const input =
+        document.getElementById("messageInput");
+
+    input.value = text;
+
+    autoResizeTextarea();
+
+    input.focus();
+
+}
+
+
+/* =====================================================
+   FILE
+===================================================== */
+
+function handleFile(event){
+
+    const file =
+        event.target.files[0];
+
+    if(!file) return;
+
+    selectedFile = file;
+
+    document.getElementById(
+        "fileName"
+    ).textContent = file.name;
+
+    document.getElementById(
+        "filePreview"
+    ).classList.add("show");
+
+}
+
+
+function removeFile(){
+
+    selectedFile = null;
+
+    document.getElementById(
+        "fileInput"
+    ).value = "";
+
+    document.getElementById(
+        "filePreview"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   TEXTAREA
+===================================================== */
+
+function setupTextarea(){
+
+    const textarea =
+        document.getElementById(
+            "messageInput"
+        );
+
+    textarea.addEventListener(
+        "input",
+        autoResizeTextarea
+    );
+
+}
+
+
+function autoResizeTextarea(){
+
+    const textarea =
+        document.getElementById(
+            "messageInput"
+        );
+
+    textarea.style.height = "auto";
+
+    textarea.style.height =
+        Math.min(
+            textarea.scrollHeight,
+            180
+        ) + "px";
+
+}
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+function handleKeyboard(e){
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+    if(
+        e.target === input &&
+        e.key === "Enter" &&
+        !e.shiftKey
+    ){
+
+        e.preventDefault();
+
+        sendMessage();
+
+    }
+
+    if(e.key === "Escape"){
+
+        closeAllModals();
+
+        closeSidebar();
+
+    }
+
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+function toggleSidebar(){
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById(
+            "sidebarOverlay"
+        );
+
+    sidebar.classList.toggle("open");
+
+    overlay.classList.toggle(
+        "show",
+        sidebar.classList.contains("open")
+    );
+
+}
+
+
+function closeSidebar(){
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
+
+    document
+        .getElementById("sidebarOverlay")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("light");
+
+    localStorage.setItem(
+        "neoai_theme",
+        document.body.classList.contains("light")
+            ? "light"
+            : "dark"
+    );
+
+}
+
+
+(function loadTheme(){
+
+    const theme =
+        localStorage.getItem(
+            "neoai_theme"
+        );
+
+    if(theme === "light"){
+
+        document.body.classList.add("light");
+
+    }
+
+})();
+
+
+/* =====================================================
+   MARKDOWN
+===================================================== */
+
+function markdownToHTML(text){
+
+    if(!text) return "";
+
+    let escaped =
+        escapeHTML(text);
+
+    const blocks = [];
+
+    escaped =
+        escaped.replace(
+            /```([\s\S]*?)```/g,
+            function(_,code){
+
+                const id =
+                    "code_" +
+                    Math.random()
+                    .toString(36)
+                    .slice(2);
+
+                blocks.push({
+                    id,
+                    code
+                });
+
+                return `@@CODE_${blocks.length-1}@@`;
+
+            }
+        );
+
+    escaped =
+        escaped.replace(
+            /^### (.*)$/gm,
+            "<h3>$1</h3>"
+        );
+
+    escaped =
+        escaped.replace(
+            /^## (.*)$/gm,
+            "<h2>$1</h2>"
+        );
+
+    escaped =
+        escaped.replace(
+            /^# (.*)$/gm,
+            "<h1>$1</h1>"
+        );
+
+    escaped =
+        escaped.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+    escaped =
+        escaped.replace(
+            /\*(.*?)\*/g,
+            "<em>$1</em>"
+        );
+
+    escaped =
+        escaped.replace(
+            /`([^`\n]+)`/g,
+            '<span class="inline-code">$1</span>'
+        );
+
+    escaped =
+        escaped.replace(
+            /^\s*[-*] (.*)$/gm,
+            "<li>$1</li>"
+        );
+
+    escaped =
+        escaped.replace(
+            /(<li>.*<\/li>)/gs,
+            "<ul>$1</ul>"
+        );
+
+    escaped =
+        escaped.replace(
+            /\n\n/g,
+            "</p><p>"
+        );
+
+    escaped =
+        "<p>" + escaped + "</p>";
+
+    escaped =
+        escaped.replace(
+            /@@CODE_(\d+)@@/g,
+            function(_,index){
+
+                const item =
+                    blocks[Number(index)];
+
+                const safeCode =
+                    item.code;
+
+                return `
+
+                    <div class="code-wrap">
+
+                        <div class="code-head">
+
+                            <span>
+                                code
+                            </span>
+
+                            <button
+                                class="code-copy"
+                                onclick="copyRawCode(this)"
+                            >
+                                Copy
+                            </button>
+
+                        </div>
+
+                        <div class="code-scroll">
+
+                            <pre>${safeCode}</pre>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+    return escaped;
+
+}
+
+
+/* =====================================================
+   COPY CODE
+===================================================== */
+
+async function copyRawCode(button){
+
+    const wrap =
+        button.closest(".code-wrap");
+
+    const code =
+        wrap.querySelector("pre")
+        .textContent;
+
+    try{
+
+        await navigator.clipboard.writeText(
+            code
+        );
+
+        button.textContent = "Copied!";
+
+        setTimeout(() => {
+
+            button.textContent = "Copy";
+
+        },1200);
+
+    }catch(e){
+
+        showToast(
+            "Tidak dapat menyalin code."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHTML(str){
+
+    return String(str)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeMarkdown(str){
+
+    return String(str)
+        .replace(/`/g,"\\`");
+
+}
+
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+function scrollToBottom(){
+
+    const area =
+        document.getElementById(
+            "chatArea"
+        );
+
+    setTimeout(() => {
+
+        area.scrollTop =
+            area.scrollHeight;
+
+    },20);
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer;
+
+function showToast(text){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+    toast.textContent = text;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },2200);
+
+}
+
+
+/* =====================================================
+   CLOSE MODALS
+===================================================== */
+
+function closeAllModals(){
+
+    document
+        .querySelectorAll(".modal-overlay")
+        .forEach(modal =>
+            modal.classList.remove("show")
+        );
+
+    renameTargetId = null;
+
+    deleteTargetId = null;
+
+}
+
+
+/* =====================================================
+   MODAL CLICK OUTSIDE
+===================================================== */
+
+document.addEventListener("click",function(e){
+
+    if(
+        e.target.classList.contains(
+            "modal-overlay"
+        )
+    ){
+
+        e.target.classList.remove("show");
+
+        renameTargetId = null;
+
+        deleteTargetId = null;
+
+    }
+
+});
+
+
+/* =====================================================
+   UTILITY
+===================================================== */
+
+function sleep(ms){
+
+    return new Promise(
+        resolve => setTimeout(resolve,ms)
+    );
+
+}
+
+</script>
+
+</body>
+</html>
