@@ -1,0 +1,9 @@
+{
+  "name": "neoai",
+  "version": "1.0.0",
+  "description": "NeoAI - AI Chat",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
